@@ -5,8 +5,9 @@ ERR_CODE := A2202
 SOURCE := $(firstword $(wildcard test.*.asm))
 SOURCE ?= test.err.$(ERR_CODE).asm
 
-AS=wine jwasm
+AS=jwasm
 ARCHIVER=7z
+
 
 .PHONY:	test_ok test_fail diff clean help pack
 
