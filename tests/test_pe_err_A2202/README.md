@@ -73,13 +73,13 @@ Main targets:
 ### test_ok
 
 ```sh
-jwasm -pe -Fo=test_ok test.err.A2202.asm
+jwasm -pe -Fo=test_ok -Fl=test_ok.lst -Sg test.err.A2202.asm
 ```
 
 ### test_fail
 
 ```sh
-jwasm -pe -Fo=test_fail -DDIRECT_CALL=1 test.err.A2202.asm
+jwasm -pe -Fo=test_fail -Fl=test_ok.lst -Sg -DDIRECT_CALL=1 test.err.A2202.asm
 ```
 
 Build result:
@@ -88,6 +88,24 @@ Build result:
 - `test_fail` target result: **FAIL**
 
 Compiles **OK** only if `DIRECT_CALL` is not defined.
+
+
+## Listings diff
+
+```sh
+diff test_ok.lst test_fail.lst >tests.diff
+```
+
+!["Diff"][img.diff]
+
+Missing imports:
+
+|Name	|Type	|Params	|Section|Scope	|Conv	|
+|:------|:----	|---:	|:------|----	|----	|
+|`_imp__ExitProcess@4`		|`@LPPROC`|8h|`.idata$5`|Public|STDCALL
+|`_imp__GetCommandLineA@0`	|`@LPPROC`|0h|`.idata$5`|Public|STDCALL
+|`_imp__GetModuleHandleA@4`	|`@LPPROC`|4h|`.idata$5`|Public|STDCALL
+|`_imp__printf`			|`@LPPROС`|10h|`.idata$5`|Public|C
 
 
 ## Files
@@ -117,3 +135,6 @@ Issue in official JWasm repo:
 [test.make]: makefile
 
 [issue.official]: https://github.com/Baron-von-Riedesel/JWasm/issues/46
+
+[img.diff]: diff.png
+
