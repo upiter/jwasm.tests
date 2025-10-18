@@ -1,0 +1,42 @@
+# Link test executable
+# JWLink
+
+system begin base
+	option		osname = 'test'
+
+	#option		nolargeaddressaware
+	option		fuzzyexport
+
+	format		windows pe
+	runtime		windows
+
+	option		osversion = 6.0
+	option		linkversion = 14.36
+
+	export {
+		JWASM_VERSION = AsmVersion
+	}
+
+end
+
+
+system begin ok
+
+	sys		base ^
+	name		test_ok
+
+	option		map
+	option		checksum
+
+end
+
+
+system begin fail
+
+	sys		base ^
+	name		test_fail
+
+	option		map
+	option		checksum
+
+end
