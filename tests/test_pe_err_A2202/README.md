@@ -96,6 +96,41 @@ Compiles **OK** only if `DIRECT_CALL` is not defined.
 diff test_ok.lst test_fail.lst >tests.diff
 ```
 
+### Code: test_ok
+
+|Offset		|Dump		|	|Code		|
+|----:		|:-------	|:----:	|:----------	|
+|		|		|	|**GetModuleHandleA:**	|
+|00000000	|		|	|`invoke	GetModuleHandleA, NULL`
+|00000000	|6A00		|*	|`push	NULL`
+|		|		|*	|`externdef _imp__GetModuleHandleA@4: ptr proc`
+|00000002	|FF1500000000	|*	|`call	_imp__GetModuleHandleA@4`
+|00000008	|A300000000	|	|`mov	hInstance, eax`
+|		|		|	|**GetCommandLine:**	|
+|0000000D	|		|	|`invoke	GetCommandLineA`
+|		|		|*	|`externdef	_imp__GetCommandLineA@0: ptr proc`
+|0000000D	|FF1500000000	|*	|`call	_imp__GetCommandLineA@0`
+|00000013	|A300000000	|	|`mov	pCommandLine, eax`
+
+
+### Code: test_fail
+
+|Offset		|Dump		|	|Code		|
+|----:		|:-------	|:----:	|:----------	|
+|		|		|	|**GetModuleHandleA:**	|
+|00000000	|		|	|`push	NULL`
+|00000002	|		|	|`call	GetModuleHandleA`
+|00000007	|		|	|`mov	hInstance, eax`
+|		|		|	|**GetCommandLine:**	|
+|0000000C	|		|	|`call	GetCommandLineA`
+|00000011	|		|	|`mov	pCommandLine, eax`
+
+
+There is no dump in this listing, may be another bug.
+
+
+### Symbols
+
 !["Diff"][img.diff]
 
 Missing imports:
@@ -136,5 +171,5 @@ Issue in official JWasm repo:
 
 [issue.official]: https://github.com/Baron-von-Riedesel/JWasm/issues/46
 
-[img.diff]: diff.png
+[img.diff]: diff.symbols.png
 
