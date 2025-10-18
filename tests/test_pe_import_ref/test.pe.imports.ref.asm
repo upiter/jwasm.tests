@@ -67,6 +67,7 @@ szAsmVerFmt		db	"JWasm version: %d.%d (%d)", 0
 align	10h
 
 ; Testing direct import reference
+Public	DbgApi
 DbgApi			DBG_API	<OutputDebugStringA, OutputDebugStringW>
 
 align	10h

@@ -51,6 +51,28 @@ align	10h
 DbgApi	DBG_API	<OutputDebugStringA, OutputDebugStringW>
 ```
 
+
+## Code Diff
+
+`test_ok.exe`:
+
+!["main code"][hiew.main.ok]
+
+`test_fail.exe`:
+
+!["main code"][hiew.main.fail]
+
+## Data Reference Diff
+
+`test_ok.exe`:
+
+!["Data Ref"][hiew.ref.ok]
+
+`test_fail.exe`:
+
+!["Data Ref"][hiew.ref.fail]
+
+
 ## Output
 
 ### Correct result from `test_ok.exe`:
@@ -68,3 +90,10 @@ Import reference
 JWasm version: 2.19 (219)
 Address @ 0000000000000000
 ```
+
+
+[hiew.main.ok]: hiew.main.ok.png
+[hiew.main.fail]: hiew.main.fail.png
+
+[hiew.ref.fail]: hiew.ref.fail.png
+[hiew.ref.ok]: hiew.ref.ok.png

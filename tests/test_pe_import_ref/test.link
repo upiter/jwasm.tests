@@ -15,6 +15,7 @@ system begin base
 
 	export {
 		JWASM_VERSION = AsmVersion
+		API = DbgApi
 	}
 
 end

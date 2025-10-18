@@ -149,6 +149,7 @@ test.pe.imports.ref.asm
 0000003C 00000000               align	10h
 
                                 ; Testing direct import reference
+                                Public	DbgApi
 00000040 000000000000000000     DbgApi			DBG_API	<OutputDebugStringA, OutputDebugStringW>
 
 00000050                        align	10h
@@ -460,7 +461,7 @@ AppName  . . . . . . . . . . . .        Byte[17]           0h _DATA FASTCALL
 AsmVersion . . . . . . . . . . .        DWord             1Eh _DATA Public FASTCALL
 CommandLine  . . . . . . . . . .        PSTR               8h _BSS FASTCALL
 DIRECT_IMPORTS . . . . . . . . .        Text   
-DbgApi . . . . . . . . . . . . .        DBG_API           40h _DATA FASTCALL
+DbgApi . . . . . . . . . . . . .        DBG_API           40h _DATA Public FASTCALL
 EFRAME . . . . . . . . . . . . .        Text   export FRAME
 GetCommandLine . . . . . . . . .        Text   GetCommandLineA
 GetModuleHandle  . . . . . . . .        Text   GetModuleHandleA
@@ -481,4 +482,4 @@ strBuffer  . . . . . . . . . . .        Byte[512]         10h _BSS FASTCALL
 szAsmVerFmt  . . . . . . . . . .        Byte[26]          22h _DATA FASTCALL
 szFmt  . . . . . . . . . . . . .        Byte[13]          11h _DATA FASTCALL
 
-test.pe.imports.ref.asm: 178 lines, 2 passes, 1 ms, 0 warnings, 0 errors
+test.pe.imports.ref.asm: 179 lines, 2 passes, 1 ms, 0 warnings, 0 errors
