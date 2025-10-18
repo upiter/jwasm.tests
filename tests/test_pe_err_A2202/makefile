@@ -5,26 +5,32 @@ ERR_CODE := A2202
 SOURCE := $(firstword $(wildcard test.*.asm))
 SOURCE ?= test.err.$(ERR_CODE).asm
 
+AS=wine jwasm
+ARCHIVER=7z
 
-.PHONY:	test_ok test_fail clean help pack
+.PHONY:	test_ok test_fail diff clean help pack
 
 
-all:	test_ok test_fail
+all:	test_ok test_fail diff
 
 
 test_ok:
-	jwasm -pe -Fo=test_ok $(SOURCE)
+	$(AS) -pe -Fo=test_ok -Fl=test_ok.lst -Sg $(SOURCE)
 
 
 test_fail:
-	jwasm -pe -Fo=test_fail -DDIRECT_CALL=1 $(SOURCE)
+	$(AS) -pe -Fo=test_fail -Fl=test_fail.lst -Sg -DDIRECT_CALL=1 $(SOURCE)
+
+
+diff:
+	diff test_ok.lst test_fail.lst >tests.diff || true
 
 
 clean:
-	rm -f *.err *.exe *.map *.o *.obj
+	rm -f *.err *.exe *.lst *.map *.o *.obj
 
 help:
-	@jwasm -h
+	@$(AS) -h
 
 pack:
-	7z a -tzip test.err.$(ERR_CODE).zip README.md *.asm *.inc makefile *.exe
+	$(ARCHIVER) a -tzip test.err.$(ERR_CODE).zip README.md *.asm *.inc makefile *.exe
