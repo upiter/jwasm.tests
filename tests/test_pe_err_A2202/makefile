@@ -16,11 +16,11 @@ all:	test_ok test_fail diff
 
 
 test_ok:
-	$(AS) -pe -Fo=test_ok -Fl=test_ok.lst -Sg $(SOURCE)
+	$(AS) -pe -Fo=test_ok.exe -Fl=test_ok.exe.lst -Sg $(SOURCE)
 
 
 test_fail:
-	$(AS) -pe -Fo=test_fail -Fl=test_fail.lst -Sg -DDIRECT_CALL=1 $(SOURCE)
+	$(AS) -pe -Fo=test_fail.exe -Fl=test_fail.lst -Sg -DDIRECT_CALL=1 $(SOURCE)
 
 
 diff:
