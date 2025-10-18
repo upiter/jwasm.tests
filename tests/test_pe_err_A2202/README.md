@@ -98,6 +98,13 @@ Compiles **OK** only if `DIRECT_CALL` is not defined.
 - `test_ok.exe` — correct build
 
 
+## Issue
+
+Issue in official JWasm repo:
+
+- [JWasm -pe Test Suite for Error A2202 #46][issue.official]
+
+
 ## Contact
 
 - [Jupiter][jupiter.github]
@@ -108,3 +115,5 @@ Compiles **OK** only if `DIRECT_CALL` is not defined.
 [test.readme]: README.md
 [test.src]: test.err.A2202.asm
 [test.make]: makefile
+
+[issue.official]: https://github.com/Baron-von-Riedesel/JWasm/issues/46
