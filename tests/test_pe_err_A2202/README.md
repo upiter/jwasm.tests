@@ -92,9 +92,9 @@ Compiles **OK** only if `DIRECT_CALL` is not defined.
 
 ## Files
 
-- `README.md` — error overview and details
-- `makefile` — make file to build source with different options
-- `test.err.A2202.asm` — test source
+- [README.md][test.readme] — error overview and details
+- [makefile][test.make] — make file to build source with different options
+- [test.err.A2202.asm][test.src] — test source
 - `test_ok.exe` — correct build
 
 
@@ -104,3 +104,7 @@ Compiles **OK** only if `DIRECT_CALL` is not defined.
 
 
 [jupiter.github]: https://github.com/upiter
+
+[test.readme]: README.md
+[test.src]: test.err.A2202.asm
+[test.make]: makefile
