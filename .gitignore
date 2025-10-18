@@ -1,0 +1,28 @@
+# Archives
+*.7z
+*.gz
+*.tgz
+*.zip
+
+
+# Assembler
+*.map
+*.o
+*.obj
+
+
+# macOS forks
+.DS_Store
+
+
+# Sublime Text
+# *.sublime-project
+*.sublime-workspace
+
+
+# Temp reports
+tmp/
+
+
+# Logs
+*.log
