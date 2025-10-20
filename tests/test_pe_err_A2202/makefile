@@ -16,7 +16,7 @@ all:	test_ok test_fail diff
 
 
 test_ok:
-	$(AS) -pe -Fo=test_ok.exe -Fl=test_ok.exe.lst -Sg $(SOURCE)
+	$(AS) -pe -Fo=test_ok.exe -Fl=test_ok.lst -Sg $(SOURCE)
 
 
 test_fail:
