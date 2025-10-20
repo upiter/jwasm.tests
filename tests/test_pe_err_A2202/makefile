@@ -24,7 +24,7 @@ test_ok:
 
 
 test_fail:
-	$(AS) -pe -Fo=test_fail.exe -Fl=test_fail.lst -Sg -DDIRECT_CALL=1 $(SOURCE)
+	$(AS) -pe -Fo=test_fail.exe -Fl=test_fail.lst -Sg -DDIRECT_CALL=1 $(SOURCE) || true
 
 
 diff:
