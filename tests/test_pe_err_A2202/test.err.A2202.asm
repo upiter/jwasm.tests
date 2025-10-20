@@ -34,6 +34,7 @@ title	<test.err.A2202>
 ; Options
 
 ; DIRECT_CALL		equ	1
+DIRECT_CALL_FIX		equ	1
 
 
 ; Defs
@@ -63,6 +64,20 @@ printf			proto C	:ptr byte, :VARARG
 
 
 option dllimport:none
+
+
+ifdef	DIRECT_CALL_FIX
+
+externdef	_imp__GetCommandLineA@0: ptr proc
+externdef	_imp__GetModuleHandleA@4: ptr proc
+externdef	_imp__ExitProcess@4: ptr proc
+
+externdef C	_imp__printf: ptr proc
+
+; includelib	kernel32.lib
+; includelib	msvcrt.lib
+
+endif	; DIRECT_CALL_FIX
 
 
 .data
@@ -99,23 +114,47 @@ start	proc
 
 	else	; DIRECT_CALL
 
-	push	NULL
-	call	GetModuleHandle
-	mov	hInstance, eax
+	ifndef	DIRECT_CALL_FIX
 
-	call	GetCommandLine
-	mov	pCommandLine, eax
+		push	NULL
+		call	GetModuleHandle
+		mov	hInstance, eax
 
-	push	offset strAppTitle
-	call	printf
-	add	esp, 4*1
+		call	GetCommandLine
+		mov	pCommandLine, eax
 
-	push	pCommandLine
-	call	printf
-	add	esp, 4*1
+		push	offset strAppTitle
+		call	printf
+		add	esp, 4*1
 
-	push	0
-	call	ExitProcess
+		push	pCommandLine
+		call	printf
+		add	esp, 4*1
+
+		push	0
+		call	ExitProcess
+
+	else	; DIRECT_CALL_FIX
+
+		push	NULL
+		call	_imp__GetModuleHandleA@4
+		mov	hInstance, eax
+
+		call	_imp__GetCommandLineA@0
+		mov	pCommandLine, eax
+
+		push	offset strAppTitle
+		call	_imp__printf
+		add	esp, 4*1
+
+		push	pCommandLine
+		call	_imp__printf
+		add	esp, 4*1
+
+		push	0
+		call	_imp__ExitProcess@4
+
+	endif	; DIRECT_CALL_FIX
 
 	endif	; DIRECT_CALL
 
