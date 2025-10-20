@@ -1,0 +1,216 @@
+94c94
+< 00000000 4A5741534D20544553     strAppTitle		db	'JWASM TEST: Direct Call', CR, LF, 0
+---
+> 00000000                        strAppTitle		db	'JWASM TEST: Direct Call', CR, LF, 0
+97c97
+< 0000001A DB000000               AsmVersion		dd	__JWASM__	; VER_MAJOR * 100 + VER_MINOR
+---
+> 0000001A                        AsmVersion		dd	__JWASM__	; VER_MAJOR * 100 + VER_MINOR
+106,107c106,107
+< 00000000 00000000               hInstance		dd	?
+< 00000004 00000000               pCommandLine		PSTR	?
+---
+> 00000000                        hInstance		dd	?
+> 00000004                        pCommandLine		PSTR	?
+117a118
+>                                 	else	; DIRECT_CALL
+119,143c120,141
+< 00000000                        	invoke	GetModuleHandleA, NULL
+< 00000000 6A00               *    push NULL
+<                             *    externdef _imp__GetModuleHandleA@4: ptr proc
+< 00000002 FF15 00000000o     *    call _imp__GetModuleHandleA@4
+< 00000008 A3 00000000o           	mov	hInstance, eax
+< 
+< 0000000D                        	invoke	GetCommandLineA
+<                             *    externdef _imp__GetCommandLineA@0: ptr proc
+< 0000000D FF15 00000000o     *    call _imp__GetCommandLineA@0
+< 00000013 A3 00000000o           	mov	pCommandLine, eax
+< 
+< 00000018                        	invoke	printf, addr strAppTitle
+< 00000018 68 00000000o       *    push offset strAppTitle
+<                             *    externdef c _imp__printf: ptr proc
+< 0000001D FF15 00000000o     *    call _imp__printf
+< 00000023 83C404             *    add esp, 4
+< 00000026                        	invoke	printf, pCommandLine
+< 00000026 FF35 00000000o     *    push pCommandLine
+< 0000002C FF15 00000000o     *    call _imp__printf
+< 00000032 83C404             *    add esp, 4
+< 
+< 00000035                        	invoke	ExitProcess, 0
+< 00000035 6A00               *    push 0
+<                             *    externdef _imp__ExitProcess@4: ptr proc
+< 00000037 FF15 00000000o     *    call _imp__ExitProcess@4
+---
+>                                 	ifndef	DIRECT_CALL_FIX
+>                                 	else	; DIRECT_CALL_FIX
+> 
+> 00000000                        		push	NULL
+> 00000002                        		call	_imp__GetModuleHandleA@4
+> 00000008                        		mov	hInstance, eax
+> 
+> 0000000D                        		call	_imp__GetCommandLineA@0
+> 00000013                        		mov	pCommandLine, eax
+> 
+> 00000018                        		push	offset strAppTitle
+> 0000001D                        		call	_imp__printf
+> 00000023                        		add	esp, 4*1
+> 
+> 00000026                        		push	pCommandLine
+> 0000002C                        		call	_imp__printf
+> 00000032                        		add	esp, 4*1
+> 
+> 00000035                        		push	0
+> 00000037                        		call	_imp__ExitProcess@4
+> 
+>                                 	endif	; DIRECT_CALL_FIX
+149a148
+> Error A2201: Output format doesn't support externals: _imp__GetCommandLineA@0
+153,156c152,155
+< 0000 4D5A                   *   db 'MZ'
+< 0002 6800010000000400       *   dw 68h, 1, 0, 4
+< 000A 0000FFFF0000B800       *   dw 0, -1, 0, 0B8h
+< 0012 0000000000004000       *   dw 0, 0, 0, 40h
+---
+> 0000                        *   db 'MZ'
+> 0002                        *   dw 68h, 1, 0, 4
+> 000A                        *   dw 0, -1, 0, 0B8h
+> 0012                        *   dw 0, 0, 0, 40h
+158,164c157,163
+< 0040 0E                     *   push cs
+< 0041 1F                     *   pop ds
+< 0042 BA FFC0o               *   mov dx,@F - 40h
+< 0045 B409                   *   mov ah,9
+< 0047 CD21                   *   int 21h
+< 0049 B8014C                 *   mov ax,4C01h
+< 004C CD21                   *   int 21h
+---
+> 0040                        *   push cs
+> 0041                        *   pop ds
+> 0042                        *   mov dx,@F - 40h
+> 0045                        *   mov ah,9
+> 0047                        *   int 21h
+> 0049                        *   mov ax,4C01h
+> 004C                        *   int 21h
+166c165
+< 004E 5468697320697320612050 *   db 'This is a PE executable',0Dh,0Ah,'$'
+---
+> 004E                        *   db 'This is a PE executable',0Dh,0Ah,'$'
+168,241d166
+<                             *   @LPPROC typedef ptr proc
+<                             *   option DOTNAME
+< 00000000                    *   .idata$2 segment dword FLAT read public alias('.rdata') 'DATA'
+< 00000000 000000000000000000 *   DD imagerel @kernel32_dll_ilt, 0, 0, imagerel @kernel32_dll_name, imagerel @kernel32_dll_iat
+< 00000014                    *   .idata$2 ends
+< 00000000                    *   .idata$4 segment ALIGN(4) FLAT read public alias('.rdata') 'DATA'
+< 00000000                    *   @kernel32_dll_ilt label dword
+< 00000000 00000000           *   @LPPROC imagerel @GetCommandLineA_name
+< 00000004 00000000           *   @LPPROC imagerel @GetModuleHandleA_name
+< 00000008 00000000           *   @LPPROC imagerel @ExitProcess_name
+< 0000000C 00000000           *   @LPPROC 0
+< 00000010                    *   .idata$4 ends
+< 00000000                    *   .idata$5 segment ALIGN(4) FLAT read public alias('.rdata') 'DATA'
+< 00000000                    *   @kernel32_dll_iat label dword
+< 00000000 00000000           *   _imp__GetCommandLineA@0 @LPPROC imagerel @GetCommandLineA_name
+< 00000004 00000000           *   _imp__GetModuleHandleA@4 @LPPROC imagerel @GetModuleHandleA_name
+< 00000008 00000000           *   _imp__ExitProcess@4 @LPPROC imagerel @ExitProcess_name
+< 0000000C 00000000           *   @LPPROC 0
+< 00000010                    *   .idata$5 ends
+< 00000000                    *   .idata$6 segment word FLAT read public alias('.rdata') 'DATA'
+< 00000000 0000               *   @GetCommandLineA_name dw 0
+< 00000002 476574436F6D6D616E *   db 'GetCommandLineA',0
+< 00000012                    *   even
+< 00000012 0000               *   @GetModuleHandleA_name dw 0
+< 00000014 4765744D6F64756C65 *   db 'GetModuleHandleA',0
+< 00000025 00                 *   even
+< 00000026 0000               *   @ExitProcess_name dw 0
+< 00000028 4578697450726F6365 *   db 'ExitProcess',0
+< 00000034                    *   even
+< 00000034 6B65726E656C33322E *   @kernel32_dll_name db 'kernel32.dll',0
+< 00000041 00                 *   even
+< 00000042                    *   .idata$6 ends
+< 00000014                    *   .idata$2 segment dword FLAT read public alias('.rdata') 'DATA'
+< 00000014 000000000000000000 *   DD imagerel @msvcrt_dll_ilt, 0, 0, imagerel @msvcrt_dll_name, imagerel @msvcrt_dll_iat
+< 00000028                    *   .idata$2 ends
+< 00000010                    *   .idata$4 segment ALIGN(4) FLAT read public alias('.rdata') 'DATA'
+< 00000010                    *   @msvcrt_dll_ilt label dword
+< 00000010 00000000           *   @LPPROC imagerel @printf_name
+< 00000014 00000000           *   @LPPROC 0
+< 00000018                    *   .idata$4 ends
+< 00000010                    *   .idata$5 segment ALIGN(4) FLAT read public alias('.rdata') 'DATA'
+< 00000010                    *   @msvcrt_dll_iat label dword
+< 00000010 00000000           *   _imp__printf @LPPROC imagerel @printf_name
+< 00000014 00000000           *   @LPPROC 0
+< 00000018                    *   .idata$5 ends
+< 00000042                    *   .idata$6 segment word FLAT read public alias('.rdata') 'DATA'
+< 00000042 0000               *   @printf_name dw 0
+< 00000044 7072696E746600     *   db 'printf',0
+< 0000004B 00                 *   even
+< 0000004C 6D73766372742E646C *   @msvcrt_dll_name db 'msvcrt.dll',0
+< 00000057 00                 *   even
+< 00000058                    *   .idata$6 ends
+< 00000000                    *   .idata$3 segment dword FLAT read public alias('.rdata') 'DATA'
+< 00000000 000000000000000000 *   DD 0, 0, 0, 0, 0
+< 00000014                    *   .idata$3 ends
+< 
+< 
+< Binary Map:
+< 
+< Segment                  Pos(file)     RVA  Size(fil) Size(mem)
+< ---------------------------------------------------------------
+< .hdr$1                          0        0        68        68
+< .hdr$2                         68       68        F8        F8
+< .hdr$3                        160      160        A0        A0
+< _TEXT                         200     1000        3D        3D
+< .idata$2                      400     2000        28        28
+< .idata$3                      428     2028        14        14
+< .idata$4                      43C     203C        18        18
+< .idata$5                      454     2054        18        18
+< .idata$6                      46C     206C        58        58
+< _DATA                         600     3000        1E        1E
+< _BSS                            0     3020         0         8
+< ---------------------------------------------------------------
+<                                                  61E      3028
+259d183
+< @LPPROC  . . . . . . . . . . . .           4  Near32 Ptr 
+267d190
+< FLAT . . . . . . . . . . . . . .        GROUP
+268a192
+> FLAT . . . . . . . . . . . . . .        GROUP
+270,275c194
+< .hdr$3 . . . . . . . . . . . . .        32 Bit   000000A0 DWord   Public  'HDR'
+< .idata$2 . . . . . . . . . . . .        32 Bit   00000028 DWord   Public  'DATA'
+< .idata$3 . . . . . . . . . . . .        32 Bit   00000014 DWord   Public  'DATA'
+< .idata$4 . . . . . . . . . . . .        32 Bit   00000018 DWord   Public  'DATA'
+< .idata$5 . . . . . . . . . . . .        32 Bit   00000018 DWord   Public  'DATA'
+< .idata$6 . . . . . . . . . . . .        32 Bit   00000058 Word    Public  'DATA'
+---
+> .hdr$3 . . . . . . . . . . . . .        32 Bit   00000078 DWord   Public  'HDR'
+298,300d216
+< @ExitProcess_name  . . . . . . .        Word              26h .idata$6 STDCALL
+< @GetCommandLineA_name  . . . . .        Word               0h .idata$6 STDCALL
+< @GetModuleHandleA_name . . . . .        Word              12h .idata$6 STDCALL
+305,310d220
+< @kernel32_dll_iat  . . . . . . .        DWord              0h .idata$5 STDCALL
+< @kernel32_dll_ilt  . . . . . . .        DWord              0h .idata$4 STDCALL
+< @kernel32_dll_name . . . . . . .        Byte[13]          34h .idata$6 STDCALL
+< @msvcrt_dll_iat  . . . . . . . .        DWord             10h .idata$5 STDCALL
+< @msvcrt_dll_ilt  . . . . . . . .        DWord             10h .idata$4 STDCALL
+< @msvcrt_dll_name . . . . . . . .        Byte[11]          4Ch .idata$6 STDCALL
+312d221
+< @printf_name . . . . . . . . . .        Word              42h .idata$6 STDCALL
+315a225
+> DIRECT_CALL  . . . . . . . . . .        Text   1
+323,326c233,236
+< _imp__ExitProcess@4  . . . . . .        @LPPROC            8h .idata$5 Public STDCALL
+< _imp__GetCommandLineA@0  . . . .        @LPPROC            0h .idata$5 Public STDCALL
+< _imp__GetModuleHandleA@4 . . . .        @LPPROC            4h .idata$5 Public STDCALL
+< _imp__printf . . . . . . . . . .        @LPPROC           10h .idata$5 Public C
+---
+> _imp__ExitProcess@4  . . . . . .        Near32             0h External STDCALL
+> _imp__GetCommandLineA@0  . . . .        Near32             0h External STDCALL
+> _imp__GetModuleHandleA@4 . . . .        Near32             0h External STDCALL
+> _imp__printf . . . . . . . . . .        Near32             0h External C
+331c241
+< test.err.A2202.asm: 163 lines, 2 passes, 0 ms, 0 warnings, 0 errors
+---
+> test.err.A2202.asm: 163 lines, 1 passes, 1 ms, 0 warnings, 1 errors

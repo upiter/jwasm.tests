@@ -1,0 +1,241 @@
+JWasm v2.19, Jan 24 2025
+test.err.A2202.asm
+                                ; test.err.A2202.asm
+
+                                ; Test for Error A2202
+                                ; Error A2202: Output format doesn't support externals
+
+                                ; Build:
+                                ; make
+
+                                ; Test OK:
+                                ; jwasm -pe -Fo=test_ok test.err.A2202.asm
+
+                                ; Test FAIL:
+                                ; jwasm -pe -Fo=test_fail -DDIRECT_CALL=1 test.err.A2202.asm
+
+                                ; Compiles OK only if DIRECT_CALL is not defined
+
+                                ; Tested with:
+                                ; JWasm v2.19, Jan 24 2025
+
+                                ; Contact:
+                                ; Jupiter
+                                ; https://github.com/upiter
+
+
+                                title	<test.err.A2202>
+
+                                .errndef	__JWASM__, "JWasm compatible assembler required!"
+
+
+                                .386
+                                .model	flat, stdcall
+00000000                    *   _TEXT segment DWORD FLAT PUBLIC 'CODE'
+00000000                    *   _TEXT ends
+00000000                    *   _DATA segment DWORD FLAT PUBLIC 'DATA'
+00000000                    *   _DATA ends
+                            *   assume cs:flat,ds:flat,ss:flat,es:flat,fs:ERROR,gs:ERROR
+
+
+                                ; Options
+
+                                ; DIRECT_CALL		equ	1
+ = 1                            DIRECT_CALL_FIX		equ	1
+
+
+                                ; Defs
+ = 0                            NULL			equ	0
+                                PSTR			typedef	ptr byte
+
+ = A                            LF			equ	10
+ = D                            CR			equ	13
+ = CR, LF                       EOL			equ	<CR, LF>
+
+
+                                ; Imports
+
+                                option dllimport:<kernel32.dll>
+
+                                GetCommandLineA		proto
+                                GetModuleHandleA	proto	:PSTR
+                                ExitProcess		proto	:DWORD
+
+ = GetCommandLineA              GetCommandLine		equ	<GetCommandLineA>
+ = GetModuleHandleA             GetModuleHandle		equ	<GetModuleHandleA>
+
+
+                                option dllimport:<msvcrt.dll>
+
+                                printf			proto C	:ptr byte, :VARARG
+
+
+                                option dllimport:none
+
+
+                                ifdef	DIRECT_CALL_FIX
+
+                                externdef	_imp__GetCommandLineA@0: ptr proc
+                                externdef	_imp__GetModuleHandleA@4: ptr proc
+                                externdef	_imp__ExitProcess@4: ptr proc
+
+                                externdef C	_imp__printf: ptr proc
+
+                                ; includelib	kernel32.lib
+                                ; includelib	msvcrt.lib
+
+                                endif	; DIRECT_CALL_FIX
+
+
+                                .data
+00000000                    *   _DATA segment
+                            *   assume cs:ERROR
+
+00000000                        strAppTitle		db	'JWASM TEST: Direct Call', CR, LF, 0
+
+                                public	AsmVersion
+0000001A                        AsmVersion		dd	__JWASM__	; VER_MAJOR * 100 + VER_MINOR
+                                ; strAsmVerFmt		db	"JWasm version: %d.%d (%d)", 0
+
+
+                                .data?
+0000001E                    *   _DATA ends
+00000000                    *   _BSS segment DWORD FLAT PUBLIC 'BSS'
+                            *   assume cs:ERROR
+
+00000000                        hInstance		dd	?
+00000004                        pCommandLine		PSTR	?
+
+
+                                .code
+00000008                    *   _BSS ends
+00000000                    *   _TEXT segment
+                            *   assume cs:FLAT
+
+00000000                        start	proc
+
+                                	ifndef	DIRECT_CALL
+                                	else	; DIRECT_CALL
+
+                                	ifndef	DIRECT_CALL_FIX
+                                	else	; DIRECT_CALL_FIX
+
+00000000                        		push	NULL
+00000002                        		call	_imp__GetModuleHandleA@4
+00000008                        		mov	hInstance, eax
+
+0000000D                        		call	_imp__GetCommandLineA@0
+00000013                        		mov	pCommandLine, eax
+
+00000018                        		push	offset strAppTitle
+0000001D                        		call	_imp__printf
+00000023                        		add	esp, 4*1
+
+00000026                        		push	pCommandLine
+0000002C                        		call	_imp__printf
+00000032                        		add	esp, 4*1
+
+00000035                        		push	0
+00000037                        		call	_imp__ExitProcess@4
+
+                                	endif	; DIRECT_CALL_FIX
+
+                                	endif	; DIRECT_CALL
+
+0000003D                        start	endp
+
+                                end	start
+Error A2201: Output format doesn't support externals: _imp__GetCommandLineA@0
+0000003D                    *   _TEXT ends
+                            *   option DOTNAME
+0000                        *   .hdr$1 segment USE16 word read public 'HDR'
+0000                        *   db 'MZ'
+0002                        *   dw 68h, 1, 0, 4
+000A                        *   dw 0, -1, 0, 0B8h
+0012                        *   dw 0, 0, 0, 40h
+                            *   org 40h
+0040                        *   push cs
+0041                        *   pop ds
+0042                        *   mov dx,@F - 40h
+0045                        *   mov ah,9
+0047                        *   int 21h
+0049                        *   mov ax,4C01h
+004C                        *   int 21h
+004E                        *   @@:
+004E                        *   db 'This is a PE executable',0Dh,0Ah,'$'
+0068                        *   .hdr$1 ends
+
+
+Macros:
+
+                N a m e                 Type
+
+@CatStr  . . . . . . . . . . . .        Func
+@Environ . . . . . . . . . . . .        Func
+@InStr . . . . . . . . . . . . .        Func
+@SizeStr . . . . . . . . . . . .        Func
+@SubStr  . . . . . . . . . . . .        Func
+
+
+Types:
+
+                N a m e                 Size    Attr
+
+PSTR . . . . . . . . . . . . . .           4  Near32 Ptr Byte
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+.hdr$1 . . . . . . . . . . . . .        16 Bit   0068     Word    Public  'HDR'
+FLAT . . . . . . . . . . . . . .        GROUP
+.hdr$2 . . . . . . . . . . . . .        32 Bit   000000F8 DWord   Public  'HDR'
+.hdr$3 . . . . . . . . . . . . .        32 Bit   00000078 DWord   Public  'HDR'
+_BSS . . . . . . . . . . . . . .        32 Bit   00000008 DWord   Public  'BSS'
+_DATA  . . . . . . . . . . . . .        32 Bit   0000001E DWord   Public  'DATA'
+_TEXT  . . . . . . . . . . . . .        32 Bit   0000003D DWord   Public  'CODE'
+
+
+Procedures, parameters and locals:
+
+                N a m e                 Type     Value    Segment  Length
+
+ExitProcess  . . . . . . . . . .        P Near32 00000000 No Seg   00000000 *External (kernel32) STDCALL
+GetCommandLineA  . . . . . . . .        P Near32 00000000 No Seg   00000000 *External (kernel32) STDCALL
+GetModuleHandleA . . . . . . . .        P Near32 00000000 No Seg   00000000 *External (kernel32) STDCALL
+printf . . . . . . . . . . . . .        P Near32 00000000 No Seg   00000000 *External (msvcrt.d) C
+start  . . . . . . . . . . . . .        P Near   00000000 _TEXT    0000003D Public   STDCALL
+
+
+Symbols:
+
+                N a m e                 Type       Value     Attr
+
+@CodeSize  . . . . . . . . . . .        Number             0h 
+@DataSize  . . . . . . . . . . .        Number             0h 
+@Interface . . . . . . . . . . .        Number             3h 
+@Model . . . . . . . . . . . . .        Number             7h 
+@code  . . . . . . . . . . . . .        Text   _TEXT
+@data  . . . . . . . . . . . . .        Text   FLAT
+@pe_file_flags . . . . . . . . .        Number           10Fh 
+@stack . . . . . . . . . . . . .        Text   FLAT
+AsmVersion . . . . . . . . . . .        DWord             1Ah _DATA Public STDCALL
+CR . . . . . . . . . . . . . . .        Number             Dh 
+DIRECT_CALL  . . . . . . . . . .        Text   1
+DIRECT_CALL_FIX  . . . . . . . .        Number             1h 
+EOL  . . . . . . . . . . . . . .        Text   CR, LF
+GetCommandLine . . . . . . . . .        Text   GetCommandLineA
+GetModuleHandle  . . . . . . . .        Text   GetModuleHandleA
+L&_0001  . . . . . . . . . . . .        L Near            4Eh .hdr$1 STDCALL
+LF . . . . . . . . . . . . . . .        Number             Ah 
+NULL . . . . . . . . . . . . . .        Number             0h 
+_imp__ExitProcess@4  . . . . . .        Near32             0h External STDCALL
+_imp__GetCommandLineA@0  . . . .        Near32             0h External STDCALL
+_imp__GetModuleHandleA@4 . . . .        Near32             0h External STDCALL
+_imp__printf . . . . . . . . . .        Near32             0h External C
+hInstance  . . . . . . . . . . .        DWord              0h _BSS STDCALL
+pCommandLine . . . . . . . . . .        PSTR               4h _BSS STDCALL
+strAppTitle  . . . . . . . . . .        Byte[26]           0h _DATA STDCALL
+
+test.err.A2202.asm: 163 lines, 1 passes, 1 ms, 0 warnings, 1 errors
