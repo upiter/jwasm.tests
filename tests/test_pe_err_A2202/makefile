@@ -5,7 +5,11 @@ ERR_CODE := A2202
 SOURCE := $(firstword $(wildcard test.*.asm))
 SOURCE ?= test.err.$(ERR_CODE).asm
 
-AS=jwasm
+# WINE=wine 
+WINE?=
+
+AS=$(WINE)jwasm
+LD=$(WINE)jwlink
 ARCHIVER=7z
 
 
