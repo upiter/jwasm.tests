@@ -48,7 +48,7 @@ EOL			equ	<CR, LF>
 
 ; Imports
 
-option dllimport:<kernel32>
+option dllimport:<kernel32.dll>
 
 GetCommandLineA		proto
 GetModuleHandleA	proto	:PSTR
@@ -58,7 +58,7 @@ GetCommandLine		equ	<GetCommandLineA>
 GetModuleHandle		equ	<GetModuleHandleA>
 
 
-option dllimport:<msvcrt>
+option dllimport:<msvcrt.dll>
 
 printf			proto C	:ptr byte, :VARARG
 
