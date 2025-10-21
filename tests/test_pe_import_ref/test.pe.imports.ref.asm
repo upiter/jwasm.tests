@@ -16,6 +16,7 @@ title	pe_imports
 
 PE_IMP_REF	equ	1
 ; DIRECT_IMPORTS	equ	1
+; DIRECT_IMPORTS_FIX	equ	1
 
 
 .x64
@@ -39,10 +40,10 @@ include		imports.inc
 ; include	kernel32.inc
 ; include	msvcrt.inc
 
-ifndef	DIRECT_IMPORTS
+; ifndef	DIRECT_IMPORTS
 includelib	kernel32.lib
 includelib	msvcrt.lib
-endif
+; endif
 
 
 ; OutputDebugString
@@ -68,7 +69,19 @@ align	10h
 
 ; Testing direct import reference
 Public	DbgApi
+
+ifdef	DIRECT_IMPORTS_FIX
+
+externdef	_imp__OutputDebugStringA@4: ptr proc
+externdef	_imp__OutputDebugStringW@4: ptr proc
+
+DbgApi			DBG_API	<_imp__OutputDebugStringA@4, _imp__OutputDebugStringW@4>
+
+else
+
 DbgApi			DBG_API	<OutputDebugStringA, OutputDebugStringW>
+
+endif	; DIRECT_IMPORTS_FIX
 
 align	10h
 
