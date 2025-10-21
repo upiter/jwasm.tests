@@ -155,9 +155,11 @@ test.pe.imports.ref.asm
                                 Public	DbgApi
 
                                 ifdef	DIRECT_IMPORTS_FIX
-                                else
 
-00000040 000000000000000000     DbgApi			DBG_API	<OutputDebugStringA, OutputDebugStringW>
+                                externdef	_imp__OutputDebugStringA@4: ptr proc
+                                externdef	_imp__OutputDebugStringW@4: ptr proc
+
+00000040 000000000000000000     DbgApi			DBG_API	<_imp__OutputDebugStringA@4, _imp__OutputDebugStringW@4>
 
                                 endif	; DIRECT_IMPORTS_FIX
 
@@ -437,8 +439,8 @@ GetCommandLineA  . . . . . . . .        P Near64 00000000 No Seg   00000000 *Ext
 GetModuleHandleA . . . . . . . .        P Near64 00000000 No Seg   00000000 *External (kernel32) FASTCALL
 GetStartupInfoA  . . . . . . . .        P Near64 00000000 No Seg   00000000 *External (kernel32) FASTCALL
 GetStartupInfoW  . . . . . . . .        P Near64 00000000 No Seg   00000000 *External (kernel32) FASTCALL
-OutputDebugStringA . . . . . . .        P Near64 00000000 No Seg   00000000 External  (kernel32) FASTCALL
-OutputDebugStringW . . . . . . .        P Near64 00000000 No Seg   00000000 External  (kernel32) FASTCALL
+OutputDebugStringA . . . . . . .        P Near64 00000000 No Seg   00000000 *External (kernel32) FASTCALL
+OutputDebugStringW . . . . . . .        P Near64 00000000 No Seg   00000000 *External (kernel32) FASTCALL
 __getmainargs  . . . . . . . . .        P Near64 00000000 No Seg   00000000 *External (msvcrt.d) FASTCALL
 asm_ver  . . . . . . . . . . . .        P Near   00000040 _TEXT    00000052 Public   FASTCALL
   version  . . . . . . . . . . .        DWord             rbp + 0010
@@ -472,6 +474,7 @@ AppName  . . . . . . . . . . . .        Byte[17]           0h _DATA FASTCALL
 AsmVersion . . . . . . . . . . .        DWord             1Eh _DATA Public FASTCALL
 CommandLine  . . . . . . . . . .        PSTR               8h _BSS FASTCALL
 DIRECT_IMPORTS . . . . . . . . .        Text   
+DIRECT_IMPORTS_FIX . . . . . . .        Text   
 DbgApi . . . . . . . . . . . . .        DBG_API           40h _DATA Public FASTCALL
 EFRAME . . . . . . . . . . . . .        Text   export FRAME
 GetCommandLine . . . . . . . . .        Text   GetCommandLineA
@@ -486,6 +489,8 @@ __imp_GetModuleHandleA . . . . .        Near               0h _TEXT External FAS
 __imp_OutputDebugStringA . . . .        Near               0h _TEXT External FASTCALL
 __imp_printf . . . . . . . . . .        Near               0h _TEXT External FASTCALL
 __imp_sprintf  . . . . . . . . .        Near               0h _TEXT External FASTCALL
+_imp__OutputDebugStringA@4 . . .        Near               0h _DATA External FASTCALL
+_imp__OutputDebugStringW@4 . . .        Near               0h _DATA External FASTCALL
 div100 . . . . . . . . . . . . .        Number      A3D70A3Dh 
 getmainargs  . . . . . . . . . .        Text   __getmainargs
 hInstance  . . . . . . . . . . .        HINSTANCE          0h _BSS FASTCALL
