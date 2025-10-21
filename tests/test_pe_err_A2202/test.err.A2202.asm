@@ -34,7 +34,7 @@ title	<test.err.A2202>
 ; Options
 
 ; DIRECT_CALL		equ	1
-DIRECT_CALL_FIX		equ	1
+; DIRECT_CALL_FIX		equ	1
 
 
 ; Defs

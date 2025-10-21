@@ -13,10 +13,10 @@ LD=$(WINE)jwlink
 ARCHIVER=7z
 
 
-.PHONY:	test_ok test_fail diff clean help pack
+.PHONY:	test_ok test_fail test_fix diff clean help pack
 
 
-all:	test_ok test_fail diff
+all:	test_ok test_fail test_fix diff
 
 
 test_ok:
@@ -25,6 +25,10 @@ test_ok:
 
 test_fail:
 	$(AS) -pe -Fo=test_fail.exe -Fl=test_fail.lst -Sg -DDIRECT_CALL=1 $(SOURCE) || true
+
+
+test_fix:
+	$(AS) -pe -Fo=test_fix.exe -Fl=test_fix.lst -Sg -DDIRECT_CALL=1 -DDIRECT_CALL_FIX=1 $(SOURCE)
 
 
 diff:
