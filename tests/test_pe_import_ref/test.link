@@ -41,3 +41,13 @@ system begin fail
 	option		checksum
 
 end
+
+system begin fix
+
+	sys		base ^
+	name		test_fix
+
+	option		map
+	option		checksum
+
+end
