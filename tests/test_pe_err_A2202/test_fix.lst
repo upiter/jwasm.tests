@@ -74,6 +74,16 @@ test.err.A2202.asm
 
 
                                 ifdef	DIRECT_CALL_FIX
+
+                                externdef	_imp__GetCommandLineA@0: ptr proc
+                                externdef	_imp__GetModuleHandleA@4: ptr proc
+                                externdef	_imp__ExitProcess@4: ptr proc
+
+                                externdef C	_imp__printf: ptr proc
+
+                                includelib	kernel32.lib
+                                includelib	msvcrt.lib
+
                                 endif	; DIRECT_CALL_FIX
 
 
@@ -105,33 +115,30 @@ test.err.A2202.asm
 00000000                        start	proc
 
                                 	ifndef	DIRECT_CALL
+                                	else	; DIRECT_CALL
 
-00000000                        	invoke	GetModuleHandleA, NULL
-00000000 6A00               *    push NULL
-                            *    externdef _imp__GetModuleHandleA@4: ptr proc
-00000002 FF15 00000000o     *    call _imp__GetModuleHandleA@4
-00000008 A3 00000000o           	mov	hInstance, eax
+                                	ifndef	DIRECT_CALL_FIX
+                                	else	; DIRECT_CALL_FIX
 
-0000000D                        	invoke	GetCommandLineA
-                            *    externdef _imp__GetCommandLineA@0: ptr proc
-0000000D FF15 00000000o     *    call _imp__GetCommandLineA@0
-00000013 A3 00000000o           	mov	pCommandLine, eax
+00000000 6A00                   		push	NULL
+00000002 FF15 00000000o         		call	_imp__GetModuleHandleA@4
+00000008 A3 00000000o           		mov	hInstance, eax
 
-00000018                        	invoke	printf, addr strAppTitle
-00000018 68 00000000o       *    push offset strAppTitle
-                            *    externdef c _imp__printf: ptr proc
-0000001D FF15 00000000o     *    call _imp__printf
-00000023 83C404             *    add esp, 4
-00000026                        	invoke	printf, pCommandLine
-00000026 FF35 00000000o     *    push pCommandLine
-                            *    externdef c _imp__printf: ptr proc
-0000002C FF15 00000000o     *    call _imp__printf
-00000032 83C404             *    add esp, 4
+0000000D FF15 00000000o         		call	_imp__GetCommandLineA@0
+00000013 A3 00000000o           		mov	pCommandLine, eax
 
-00000035                        	invoke	ExitProcess, 0
-00000035 6A00               *    push 0
-                            *    externdef _imp__ExitProcess@4: ptr proc
-00000037 FF15 00000000o     *    call _imp__ExitProcess@4
+00000018 68 00000000o           		push	offset strAppTitle
+0000001D FF15 00000000o         		call	_imp__printf
+00000023 83C404                 		add	esp, 4*1
+
+00000026 FF35 00000000o         		push	pCommandLine
+0000002C FF15 00000000o         		call	_imp__printf
+00000032 83C404                 		add	esp, 4*1
+
+00000035 6A00                   		push	0
+00000037 FF15 00000000o         		call	_imp__ExitProcess@4
+
+                                	endif	; DIRECT_CALL_FIX
 
                                 	endif	; DIRECT_CALL
 
@@ -304,6 +311,8 @@ Symbols:
 @stack . . . . . . . . . . . . .        Text   FLAT
 AsmVersion . . . . . . . . . . .        DWord             1Ah _DATA Public STDCALL
 CR . . . . . . . . . . . . . . .        Number             Dh 
+DIRECT_CALL  . . . . . . . . . .        Text   1
+DIRECT_CALL_FIX  . . . . . . . .        Text   1
 EOL  . . . . . . . . . . . . . .        Text   CR, LF
 GetCommandLine . . . . . . . . .        Text   GetCommandLineA
 GetModuleHandle  . . . . . . . .        Text   GetModuleHandleA
@@ -318,4 +327,4 @@ hInstance  . . . . . . . . . . .        DWord              0h _BSS STDCALL
 pCommandLine . . . . . . . . . .        PSTR               4h _BSS STDCALL
 strAppTitle  . . . . . . . . . .        Byte[26]           0h _DATA STDCALL
 
-test.err.A2202.asm: 163 lines, 2 passes, 1 ms, 0 warnings, 0 errors
+test.err.A2202.asm: 163 lines, 2 passes, 0 ms, 0 warnings, 0 errors

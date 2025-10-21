@@ -1,4 +1,4 @@
-JWasm v2.19, Jan 24 2025
+JWasm v2.19, Oct 21 2025
 test.err.A2202.asm
                                 ; test.err.A2202.asm
 
@@ -41,7 +41,7 @@ test.err.A2202.asm
                                 ; Options
 
                                 ; DIRECT_CALL		equ	1
- = 1                            DIRECT_CALL_FIX		equ	1
+                                ; DIRECT_CALL_FIX		equ	1
 
 
                                 ; Defs
@@ -74,16 +74,6 @@ test.err.A2202.asm
 
 
                                 ifdef	DIRECT_CALL_FIX
-
-                                externdef	_imp__GetCommandLineA@0: ptr proc
-                                externdef	_imp__GetModuleHandleA@4: ptr proc
-                                externdef	_imp__ExitProcess@4: ptr proc
-
-                                externdef C	_imp__printf: ptr proc
-
-                                ; includelib	kernel32.lib
-                                ; includelib	msvcrt.lib
-
                                 endif	; DIRECT_CALL_FIX
 
 
@@ -118,35 +108,34 @@ test.err.A2202.asm
                                 	else	; DIRECT_CALL
 
                                 	ifndef	DIRECT_CALL_FIX
-                                	else	; DIRECT_CALL_FIX
 
 00000000                        		push	NULL
-00000002                        		call	_imp__GetModuleHandleA@4
-00000008                        		mov	hInstance, eax
+00000002                        		call	GetModuleHandleA
+00000007                        		mov	hInstance, eax
 
-0000000D                        		call	_imp__GetCommandLineA@0
-00000013                        		mov	pCommandLine, eax
+0000000C                        		call	GetCommandLineA
+00000011                        		mov	pCommandLine, eax
 
-00000018                        		push	offset strAppTitle
-0000001D                        		call	_imp__printf
-00000023                        		add	esp, 4*1
+00000016                        		push	offset strAppTitle
+0000001B                        		call	printf
+00000020                        		add	esp, 4*1
 
-00000026                        		push	pCommandLine
-0000002C                        		call	_imp__printf
-00000032                        		add	esp, 4*1
+00000023                        		push	pCommandLine
+00000029                        		call	printf
+0000002E                        		add	esp, 4*1
 
-00000035                        		push	0
-00000037                        		call	_imp__ExitProcess@4
+00000031                        		push	0
+00000033                        		call	ExitProcess
 
                                 	endif	; DIRECT_CALL_FIX
 
                                 	endif	; DIRECT_CALL
 
-0000003D                        start	endp
+00000038                        start	endp
 
                                 end	start
-Error A2201: Output format doesn't support externals: _imp__GetCommandLineA@0
-0000003D                    *   _TEXT ends
+Error A2201: Output format doesn't support externals: GetCommandLineA
+00000038                    *   _TEXT ends
                             *   option DOTNAME
 0000                        *   .hdr$1 segment USE16 word read public 'HDR'
 0000                        *   db 'MZ'
@@ -194,18 +183,18 @@ FLAT . . . . . . . . . . . . . .        GROUP
 .hdr$3 . . . . . . . . . . . . .        32 Bit   00000078 DWord   Public  'HDR'
 _BSS . . . . . . . . . . . . . .        32 Bit   00000008 DWord   Public  'BSS'
 _DATA  . . . . . . . . . . . . .        32 Bit   0000001E DWord   Public  'DATA'
-_TEXT  . . . . . . . . . . . . .        32 Bit   0000003D DWord   Public  'CODE'
+_TEXT  . . . . . . . . . . . . .        32 Bit   00000038 DWord   Public  'CODE'
 
 
 Procedures, parameters and locals:
 
                 N a m e                 Type     Value    Segment  Length
 
-ExitProcess  . . . . . . . . . .        P Near32 00000000 No Seg   00000000 *External (kernel32) STDCALL
-GetCommandLineA  . . . . . . . .        P Near32 00000000 No Seg   00000000 *External (kernel32) STDCALL
-GetModuleHandleA . . . . . . . .        P Near32 00000000 No Seg   00000000 *External (kernel32) STDCALL
-printf . . . . . . . . . . . . .        P Near32 00000000 No Seg   00000000 *External (msvcrt.d) C
-start  . . . . . . . . . . . . .        P Near   00000000 _TEXT    0000003D Public   STDCALL
+ExitProcess  . . . . . . . . . .        P Near32 00000000 No Seg   00000000 External  (kernel32) STDCALL
+GetCommandLineA  . . . . . . . .        P Near32 00000000 No Seg   00000000 External  (kernel32) STDCALL
+GetModuleHandleA . . . . . . . .        P Near32 00000000 No Seg   00000000 External  (kernel32) STDCALL
+printf . . . . . . . . . . . . .        P Near32 00000000 No Seg   00000000 External  (msvcrt.d) C
+start  . . . . . . . . . . . . .        P Near   00000000 _TEXT    00000038 Public   STDCALL
 
 
 Symbols:
@@ -223,19 +212,14 @@ Symbols:
 AsmVersion . . . . . . . . . . .        DWord             1Ah _DATA Public STDCALL
 CR . . . . . . . . . . . . . . .        Number             Dh 
 DIRECT_CALL  . . . . . . . . . .        Text   1
-DIRECT_CALL_FIX  . . . . . . . .        Number             1h 
 EOL  . . . . . . . . . . . . . .        Text   CR, LF
 GetCommandLine . . . . . . . . .        Text   GetCommandLineA
 GetModuleHandle  . . . . . . . .        Text   GetModuleHandleA
 L&_0001  . . . . . . . . . . . .        L Near            4Eh .hdr$1 STDCALL
 LF . . . . . . . . . . . . . . .        Number             Ah 
 NULL . . . . . . . . . . . . . .        Number             0h 
-_imp__ExitProcess@4  . . . . . .        Near32             0h External STDCALL
-_imp__GetCommandLineA@0  . . . .        Near32             0h External STDCALL
-_imp__GetModuleHandleA@4 . . . .        Near32             0h External STDCALL
-_imp__printf . . . . . . . . . .        Near32             0h External C
 hInstance  . . . . . . . . . . .        DWord              0h _BSS STDCALL
 pCommandLine . . . . . . . . . .        PSTR               4h _BSS STDCALL
 strAppTitle  . . . . . . . . . .        Byte[26]           0h _DATA STDCALL
 
-test.err.A2202.asm: 163 lines, 1 passes, 1 ms, 0 warnings, 1 errors
+test.err.A2202.asm: 163 lines, 1 passes, 0 ms, 0 warnings, 1 errors
