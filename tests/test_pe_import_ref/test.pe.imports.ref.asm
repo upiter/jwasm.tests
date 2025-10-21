@@ -72,10 +72,10 @@ Public	DbgApi
 
 ifdef	DIRECT_IMPORTS_FIX
 
-externdef	_imp__OutputDebugStringA@4: ptr proc
-externdef	_imp__OutputDebugStringW@4: ptr proc
+externdef	__imp_OutputDebugStringA: ptr proc
+externdef	__imp_OutputDebugStringW: ptr proc
 
-DbgApi			DBG_API	<_imp__OutputDebugStringA@4, _imp__OutputDebugStringW@4>
+DbgApi			DBG_API	<__imp_OutputDebugStringA, __imp_OutputDebugStringW>
 
 else
 

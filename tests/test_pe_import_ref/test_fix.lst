@@ -156,10 +156,10 @@ test.pe.imports.ref.asm
 
                                 ifdef	DIRECT_IMPORTS_FIX
 
-                                externdef	_imp__OutputDebugStringA@4: ptr proc
-                                externdef	_imp__OutputDebugStringW@4: ptr proc
+                                externdef	__imp_OutputDebugStringA: ptr proc
+                                externdef	__imp_OutputDebugStringW: ptr proc
 
-00000040 000000000000000000     DbgApi			DBG_API	<_imp__OutputDebugStringA@4, _imp__OutputDebugStringW@4>
+00000040 000000000000000000     DbgApi			DBG_API	<__imp_OutputDebugStringA, __imp_OutputDebugStringW>
 
                                 endif	; DIRECT_IMPORTS_FIX
 
@@ -486,11 +486,10 @@ PE_IMP_REF . . . . . . . . . . .        Number             1h
 __imp_ExitProcess  . . . . . . .        Near               0h _TEXT External FASTCALL
 __imp_GetCommandLineA  . . . . .        Near               0h _TEXT External FASTCALL
 __imp_GetModuleHandleA . . . . .        Near               0h _TEXT External FASTCALL
-__imp_OutputDebugStringA . . . .        Near               0h _TEXT External FASTCALL
+__imp_OutputDebugStringA . . . .        Near               0h _DATA External FASTCALL
+__imp_OutputDebugStringW . . . .        Near               0h _DATA External FASTCALL
 __imp_printf . . . . . . . . . .        Near               0h _TEXT External FASTCALL
 __imp_sprintf  . . . . . . . . .        Near               0h _TEXT External FASTCALL
-_imp__OutputDebugStringA@4 . . .        Near               0h _DATA External FASTCALL
-_imp__OutputDebugStringW@4 . . .        Near               0h _DATA External FASTCALL
 div100 . . . . . . . . . . . . .        Number      A3D70A3Dh 
 getmainargs  . . . . . . . . . .        Text   __getmainargs
 hInstance  . . . . . . . . . . .        HINSTANCE          0h _BSS FASTCALL
