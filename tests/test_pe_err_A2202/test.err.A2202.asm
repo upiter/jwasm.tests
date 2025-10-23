@@ -17,6 +17,9 @@
 ; Tested with:
 ; JWasm v2.19, Jan 24 2025
 
+; Fixed in:
+; JWasm v2.20, Oct 23 2025
+
 ; Contact:
 ; Jupiter
 ; https://github.com/upiter
@@ -66,7 +69,7 @@ printf			proto C	:ptr byte, :VARARG
 option dllimport:none
 
 
-ifdef	DIRECT_CALL_FIX
+ifdef	DIRECT_CALL
 
 externdef	_imp__GetCommandLineA@0: ptr proc
 externdef	_imp__GetModuleHandleA@4: ptr proc
@@ -77,7 +80,7 @@ externdef C	_imp__printf: ptr proc
 ; includelib	kernel32.lib
 ; includelib	msvcrt.lib
 
-endif	; DIRECT_CALL_FIX
+endif	; DIRECT_CALL
 
 
 .data
@@ -96,6 +99,38 @@ pCommandLine		PSTR	?
 
 
 .code
+
+ifdef	DIRECT_CALL
+ifndef	DIRECT_CALL_FIX
+
+option	prologue:none
+
+
+GetCommandLineA	proc
+	jmp	[_imp__GetCommandLineA@0]
+GetCommandLineA	endp
+
+
+GetModuleHandleA	proc	pModuleName:PSTR
+	jmp	[_imp__GetModuleHandleA@4]
+GetModuleHandleA	endp
+
+
+ExitProcess	proc	uExitCode:dword
+	jmp	[_imp__ExitProcess@4]
+ExitProcess	endp
+
+
+printf	proc C	fmt:ptr byte, args:VARARG
+	jmp	[_imp__printf]
+printf	endp
+
+
+option	prologue:prologuedef
+
+endif	; DIRECT_CALL_FIX
+endif	; DIRECT_CALL
+
 
 start	proc
 
