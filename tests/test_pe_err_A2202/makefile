@@ -8,7 +8,8 @@ SOURCE ?= test.err.$(ERR_CODE).asm
 # WINE=wine 
 WINE?=
 
-AS=$(WINE)jwasm
+# AS=$(WINE)jwasm
+AS=jwasm
 LD=$(WINE)jwlink
 ARCHIVER=7z
 
@@ -20,7 +21,7 @@ all:	test_ok test_fail test_fix diff
 
 
 test_ok:
-	$(AS) -pe -Fo=test_ok.exe -Fl=test_ok.lst -Sg $(SOURCE)
+	$(AS) -pe -Zli -Fo=test_ok.exe -Fl=test_ok.lst -Sg $(SOURCE)
 
 
 test_fail:
@@ -28,7 +29,20 @@ test_fail:
 
 
 test_fix:
-	$(AS) -pe -Fo=test_fix.exe -Fl=test_fix.lst -Sg -DDIRECT_CALL=1 -DDIRECT_CALL_FIX=1 $(SOURCE)
+	$(AS) -pe -Zli -Fo=test_fix.exe -Fl=test_fix.lst -Sg -DDIRECT_CALL=1 -DDIRECT_CALL_FIX=1 $(SOURCE)
+
+
+run:
+	@echo 'Running test executables ...'
+
+	@printf "\n\n%s\n\n" "Test 'OK'"
+	$(WINE)test_ok.exe || true
+
+	@printf "\n\n%s\n\n" "Test 'FAIL'"
+	$(WINE)test_fail.exe || true
+
+	@printf "\n\n%s\n\n" "Test 'FIX'"
+	$(WINE)test_fix.exe || true
 
 
 diff:
