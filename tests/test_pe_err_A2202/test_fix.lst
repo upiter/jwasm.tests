@@ -1,4 +1,4 @@
-JWasm v2.19, Oct 21 2025
+JWasm v2.20, Oct 23 2025
 test.err.A2202.asm
                                 ; test.err.A2202.asm
 
@@ -18,6 +18,9 @@ test.err.A2202.asm
 
                                 ; Tested with:
                                 ; JWasm v2.19, Jan 24 2025
+
+                                ; Fixed in:
+                                ; JWasm v2.20, Oct 23 2025
 
                                 ; Contact:
                                 ; Jupiter
@@ -73,7 +76,7 @@ test.err.A2202.asm
                                 option dllimport:none
 
 
-                                ifdef	DIRECT_CALL_FIX
+                                ifdef	DIRECT_CALL
 
                                 externdef	_imp__GetCommandLineA@0: ptr proc
                                 externdef	_imp__GetModuleHandleA@4: ptr proc
@@ -81,10 +84,10 @@ test.err.A2202.asm
 
                                 externdef C	_imp__printf: ptr proc
 
-                                includelib	kernel32.lib
-                                includelib	msvcrt.lib
+                                ; includelib	kernel32.lib
+                                ; includelib	msvcrt.lib
 
-                                endif	; DIRECT_CALL_FIX
+                                endif	; DIRECT_CALL
 
 
                                 .data
@@ -94,7 +97,7 @@ test.err.A2202.asm
 00000000 4A5741534D20544553     strAppTitle		db	'JWASM TEST: Direct Call', CR, LF, 0
 
                                 public	AsmVersion
-0000001A DB000000               AsmVersion		dd	__JWASM__	; VER_MAJOR * 100 + VER_MINOR
+0000001A DC000000               AsmVersion		dd	__JWASM__	; VER_MAJOR * 100 + VER_MINOR
                                 ; strAsmVerFmt		db	"JWasm version: %d.%d (%d)", 0
 
 
@@ -111,6 +114,12 @@ test.err.A2202.asm
 00000008                    *   _BSS ends
 00000000                    *   _TEXT segment
                             *   assume cs:FLAT
+
+                                ifdef	DIRECT_CALL
+                                ifndef	DIRECT_CALL_FIX
+                                endif	; DIRECT_CALL_FIX
+                                endif	; DIRECT_CALL
+
 
 00000000                        start	proc
 
@@ -327,4 +336,4 @@ hInstance  . . . . . . . . . . .        DWord              0h _BSS STDCALL
 pCommandLine . . . . . . . . . .        PSTR               4h _BSS STDCALL
 strAppTitle  . . . . . . . . . .        Byte[26]           0h _DATA STDCALL
 
-test.err.A2202.asm: 163 lines, 2 passes, 0 ms, 0 warnings, 0 errors
+test.err.A2202.asm: 198 lines, 2 passes, 0 ms, 0 warnings, 0 errors
