@@ -32,20 +32,10 @@ system begin ok
 end
 
 
-system begin fail
+system begin direct
 
 	sys		base ^
-	name		test_fail
-
-	option		map
-	option		checksum
-
-end
-
-system begin fix
-
-	sys		base ^
-	name		test_fix
+	name		test_direct
 
 	option		map
 	option		checksum
