@@ -5,15 +5,16 @@ SOURCE?=test.pe.import.ref.asm
 
 
 OBJ_OK=test_ok.obj
-OBJ_FAIL=test_fail.obj
-OBJ_FIX=test_fix.obj
+OBJ_DIRECT=test_direct.obj
 
 
 # WINE=wine 
 WINE?=
 
-AS=$(WINE)jwasm
+# AS=$(WINE)jwasm
+AS=jwasm
 LD=$(WINE)jwlink
+# LD=wine jwlink
 ARCHIVER=7z
 
 
@@ -31,35 +32,27 @@ ASM64_LIB=$(ASM64_BASE)/lib64/
 all:	test diff run
 
 
-test:	test_ok.exe test_fail.exe test_fix.exe
+test:	test_ok.exe test_direct.exe 
 
 
 $(OBJ_OK):	$(SOURCE)
-	$(AS) -q -coff -zzs -zze -I=$(ASM64_INC) -I=$(ASM64_MACROS) -nm=test -Fd -Fo=$@ -Fl=test_ok.lst -Sg $<
+	$(AS) -coff -zzs -zze -I=$(ASM64_INC) -I=$(ASM64_MACROS) -nm=test -Fd -Fo=$@ -Fl=test_ok.lst -Sg $<
 
 
-$(OBJ_FAIL):	$(SOURCE)
-	$(AS) -q -coff -zzs -zze -I=$(ASM64_INC) -I=$(ASM64_MACROS) -nm=test -Fd -Fo=$@ -Fl=test_fail.lst -Sg -DDIRECT_IMPORTS $< || true
-
-
-$(OBJ_FIX):	$(SOURCE)
-	$(AS) -q -coff -zzs -zze -I=$(ASM64_INC) -I=$(ASM64_MACROS) -nm=test -Fd -Fo=$@ -Fl=test_fix.lst -Sg -DDIRECT_IMPORTS -DDIRECT_IMPORTS_FIX $< || true
+$(OBJ_DIRECT):	$(SOURCE)
+	$(AS) -coff -I=$(ASM64_INC) -I=$(ASM64_MACROS) -nm=test -Fd -Fo=$@ -Fl=test_direct.lst -Sg -DDIRECT_IMPORTS $< || true
 
 
 test_ok.exe:	$(OBJ_OK)
 	$(LD) @test.link system ok libpath $(ASM64_LIB) file $^
 
 
-test_fail.exe:	$(OBJ_FAIL)
-	$(LD) @test.link system fail libpath $(ASM64_LIB) file $^ || true
-
-
-test_fix.exe:	$(OBJ_FIX)
-	$(LD) @test.link system fix libpath $(ASM64_LIB) file $^ || true
+test_direct.exe:	$(OBJ_DIRECT)
+	$(LD) @test.link system direct libpath $(ASM64_LIB) file $^ || true
 
 
 diff:
-	diff test_ok.lst test_fail.lst >tests.diff || true
+	diff test_ok.lst test_direct.lst >tests.diff || true
 
 
 env:
@@ -72,15 +65,15 @@ env:
 
 
 run:
-	@echo Expected test result: OK
-	@echo
-	
+	@echo 'Running test executables ...'
+
+	@printf "\n\n%s\n\n" "Test 'OK'"
+
 	$(WINE)test_ok.exe
 
-	@echo Expected test result: FAIL
-	@echo
+	@printf "\n\n%s\n\n" "Test 'DIRECT'"
 
-	$(WINE)test_fail.exe || true
+	$(WINE)test_direct.exe || true
 
 
 clean:
