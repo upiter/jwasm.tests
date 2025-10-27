@@ -16,7 +16,6 @@ title	pe_imports
 
 PE_IMP_REF	equ	1
 ; DIRECT_IMPORTS	equ	1
-; DIRECT_IMPORTS_FIX	equ	1
 
 
 .x64
@@ -40,10 +39,10 @@ include		imports.inc
 ; include	kernel32.inc
 ; include	msvcrt.inc
 
-; ifndef	DIRECT_IMPORTS
+ifndef	DIRECT_IMPORTS
 includelib	kernel32.lib
 includelib	msvcrt.lib
-; endif
+endif
 
 
 ; OutputDebugString
@@ -70,18 +69,8 @@ align	10h
 ; Testing direct import reference
 Public	DbgApi
 
-ifdef	DIRECT_IMPORTS_FIX
-
-externdef	__imp_OutputDebugStringA: ptr proc
-externdef	__imp_OutputDebugStringW: ptr proc
-
-DbgApi			DBG_API	<__imp_OutputDebugStringA, __imp_OutputDebugStringW>
-
-else
-
 DbgApi			DBG_API	<OutputDebugStringA, OutputDebugStringW>
 
-endif	; DIRECT_IMPORTS_FIX
 
 align	10h
 
@@ -105,7 +94,8 @@ print	proc EFRAME	uses rsi msg:ptr
 	Local	strLf	:QWORD
 
 	mov	rsi, rcx
-	invoke	OutputDebugString, rcx
+	invoke	DbgApi.OutputDebugString, rcx
+	; invoke	OutputDebugString, rcx
 	invoke	printf, rsi
 
 	lea	rcx, strLf
